@@ -6,23 +6,23 @@ intended for projects of _small_ teams, the definition of which is as follows:
 
 ## USAGE
 
-$ gc init 
+$ gc init  
     initializes a `.gc` directory, where all gc-related data will be stored.
 
-$ gc save \[ -m "message" ] 
+$ gc save \[ -m "message" ]  
     saves the current state with an optional message.
 
-$ gc push 
+$ gc push  
     sends the last saved state state to the remote.
 
-$ gc pull 
+$ gc pull  
     requests the latest state from the remote.
 
-$ gc remote set 'URL' 
+$ gc remote set 'URL'  
     sets the remote to the provided value.
 
-$ gc remote get 
+$ gc remote get  
     prints the current remote to the stdout.
 
-$ gc config 'NAME' 'EMAIL' 
+$ gc config 'NAME' 'EMAIL'  
     sets the current user's name and email.
