@@ -15,6 +15,18 @@ COMMANDS
     save [ -m MESSAGE ]
         saves the current state with an optional message.
 
+    log [ -n NUMBER ] [ -r START FINISH ]
+        logs the last NUMBER saves or the saves in the range [START, FINISH).
+
+    config
+        prints the current user's config to the stdout.
+
+    config [ -n NAME ] [ -e EMAIL ]
+        sets the current user's name and/or email.
+
+    clone URL
+        clones the repository from the specified URL into the current directory.
+
     push
         sends the last saved state state to the remote.
 
@@ -26,15 +38,6 @@ COMMANDS
 
     remote URL
         sets the remote to the provided value.
-
-    log [ -n NUMBER ] [ -r START FINISH ]
-        logs the last NUMBER saves or the saves in the range [START, FINISH).
-
-    config
-        prints the current user's config to the stdout.
-
-    config [ -n NAME ] [ -e EMAIL ]
-        sets the current user's name and/or email.
 
     export FORMAT PATH
         export the project to PATH as another FORMAT: git, fossil, mercurial, etc.
