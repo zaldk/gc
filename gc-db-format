@@ -1,0 +1,62 @@
+All dynamic-length fields start at 16B offset 0,
+and are padded with 0s until full 16B align.
+
+#NAME means the length of the NAME string (lua syntax).
+
+*NAME Start* ... *NAME End* is dynamically large data section,
+length must be provided in the header of the object.
+
+
+
+HEADER:
+GCDB + 0x8A2F6D6B == 8B magic
+V == 1B version
+H == 1B hash algorithm id
+C == 1B compression algorithm id
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| G   C   D   B |  0x8A2F6D6B   | V | H | C | RESERVED          |
++---------------+---------------+---+---+---+-------------------+
+
+
+
+SNAPSHOT:
+Name and Email are concatenated.
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| UUID (128 bits)                                               |
++-------------------------------+-------+-------+---------------+
+| Timestamp                     | #Name | #Email| #Snapshot Msg |
++-------------------------------+-------+-------+---------------+
+| Snapshot Length               | RESERVED                      |
++-------------------------------+-------------------------------+
+| *Name + Email Start*                                          |
+|                                                   +-----------+
+|                                *Name + Email End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *Snapshot Message Start*                                      |
+|                                                   +-----------+
+|                            *Snapshot Message End* | *zeroed*  |
++---------------------------------------------------+-----------+
+
+
+
+FILE:
+Paths are relative to the directory containing the .gc directory.
+Path is separated by forward slashes (/).
+Path includes the name of the file.
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|  Path Length  |  File Length  | RESERVED                      |
++---------------+---------------+-------------------------------+
+| *Path Start*                                                  |
+|                                                   +-----------+
+|                                        *Path End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *File Content Start*                                          |
+|                                                   +-----------+
+|                                *File Content End* | *zeroed*  |
++---------------------------------------------------+-----------+
