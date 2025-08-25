@@ -1,0 +1,2 @@
+other things in the foo file.
+Multiline stuffs.

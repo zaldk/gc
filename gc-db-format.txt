@@ -1,0 +1,73 @@
+All dynamic-length fields start at 16B offset 0,
+and are padded with 0s at the end until 16B align.
+
+#NAME means the length of the NAME string (lua syntax).
+
+*NAME Start* ... *NAME End* is dynamically large data section,
+length must be provided in the header of the object.
+
+
+
+DATABASE HEADER:
+GCDB + "random 4 bytes" == 8B magic
+V == version
+H == hash algorithm id
+C == compression algorithm id (0 means uncompressed)
+E == encryption type id (0 means unencrypted)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| G   C   D   B |  0x69420DBF   | V | H | C | E |               |
++---------------+---------------+---+---+---+---+---------------+
+
+
+
+SNAPSHOT HEADER:
+Timestamp is the number of seconds since 1 January 1970.
+#Snapshot is the length of all file objects contained under this snapshot.
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| Hash                          | Timestamp                     |
++-------+-------+---------------+-------------------------------+
+| #Name | #Email| #Snapshot Msg | #Snapshot                     |
++-------+-------+---------------+-------------------------------+
+| *Name Start*                                                  |
+|                                                   +-----------+
+|                                        *Name End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *Email Start*                                                 |
+|                                                   +-----------+
+|                                       *Email End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *Snapshot Message Start*                                      |
+|                                                   +-----------+
+|                            *Snapshot Message End* | *zeroed*  |
++---------------------------------------------------+-----------+
+
+
+
+FILE:
+The directory containing the .gc directory shall be known as Root.
+The Root directory shall not be the filesystem's root directory.
+Paths are relative to the root.
+Path is separated by forward slashes (/).
+Path includes the name of the file.
+M == Metadata format id.
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| #Metadata     | #Path         | #Content      | M |           |
++---------------+---------------+---------------+---+-----------+
+| *Metadata Start*                                              |
+|                                                   +-----------+
+|                                    *Metadata End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *Path Start*                                                  |
+|                                                   +-----------+
+|                                        *Path End* | *zeroed*  |
++---------------------------------------------------+-----------+
+| *Content Start*                                               |
+|                                                   +-----------+
+|                                     *Content End* | *zeroed*  |
++---------------------------------------------------+-----------+
