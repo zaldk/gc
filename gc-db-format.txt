@@ -1,3 +1,8 @@
+GARBAGE COLLECTOR DATABASE FORMAT
+
+This format is meant to be 90% append-only, meaning writes should almost
+always append data to the end.
+
 All dynamic-length fields start at 16B offset 0,
 and are padded with 0s at the end until 16B align.
 
