@@ -6,7 +6,7 @@ always append data to the end.
 All dynamic-length fields start at 16B offset 0,
 and are padded with 0s at the end until 16B align.
 
-#NAME means the length of the NAME string (lua syntax).
+#NAME means the length of the NAME string (utf-8, length in bytes).
 
 *NAME Start* ... *NAME End* is dynamically large data section,
 length must be provided in the header of the object.
@@ -22,20 +22,17 @@ E == encryption type id (0 means unencrypted)
 +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
 +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-| G   C   D   B |  0x69420DBF   | V | H | C | E |               |
+| G   C   D   B |  0x69420DBF   | V | H | C | E | #Contributors |
 +---------------+---------------+---+---+---+---+---------------+
 
-CONTRIBUTORS HEADER:
+CONTRIBUTOR:
 +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
 +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-| #Contributors |                                               |
-+---------------+-----------------------------------------------+
-
-CONTRIBUTOR:
-+---------------+---------------+-------------------------------+
-| #Name         | #Email        | ID (hash of name+email+random)|
-+---------------+---------------+-------------------------------+
+| #Name         | #Email        | Priority      |               |
++---------------+---------------+---------------+---------------+
+| ID (hash of name+email)                                       |
++---------------------------------------------------------------+
 | *Name Start*                                                  |
 |                                                   +-----------+
 |                                        *Name End* | *zeroed*  |
