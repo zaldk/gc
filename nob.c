@@ -26,9 +26,9 @@ int main(int argc, char **argv) {
     }
 
     nob_cc(&cmd);
-    cmd_append(&cmd, "-Wall", "-Wextra", "-std=c89");
+    cmd_append(&cmd, "-Wall", "-Wextra", "-g", "-std=c99");
     cmd_append(&cmd, "-Wno-unused-parameter", "-Wno-unused-variable");
-    // cmd_append(&cmd, "-fsanitize=address", "-fsanitize=leak", "-fsanitize=undefined", "-fsanitize=null");
+    cmd_append(&cmd, "-fsanitize=address", "-fsanitize=leak", "-fsanitize=undefined", "-fsanitize=null");
     cmd_append(&cmd, "-o", BUILD"/main", SRC"/main.c");
     if (!cmd_run(&cmd)) return 1;
 

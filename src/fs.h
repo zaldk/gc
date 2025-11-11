@@ -2,5 +2,7 @@
 
 #include "common.h"
 
-typedef struct file_s {} file_t;
+typedef struct file_s {
+    FILE fd;
+} file_t;
 
