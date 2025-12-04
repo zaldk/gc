@@ -1,6 +1,17 @@
 #ifndef GC_COMMON
 #define GC_COMMON
 
+
+#define SHIFT(xs, xs_size) (GC_ASSERT((xs)!=NULL && (xs_size)>0), xs_size--, *(xs)++)
+#define GC_ENUM(name, type) typedef type name; enum
+
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define GC_WINDOWS
+#elif defined(__linux__) || defined(__unix__) || defined(__APPLE__) || defined(__POSIX__)
+    #define GC_POSIX
+#endif
+
 #include <stddef.h>
 #ifndef GC_INT_DEFINED
 #   ifdef GC_NO_STDINT /* optional for any system that might not have stdint.h */
@@ -30,6 +41,10 @@
 #   define GC_INT_DEFINED
 #endif /* GC_INT_DEFINED */
 
+typedef u8 bool;
+#define GC_TRUE 1
+#define GC_FALSE 0
+
 #ifndef GC_NO_STDLIB
 #   include <stdlib.h>
 #   define GC_MALLOC malloc
@@ -46,8 +61,22 @@
 #ifndef GC_NO_STDIO
 #   include <stdio.h>
 #   define GC_PRINTF printf
-#   define GC_DEBUG "[DEBUG] "
+#   define GC_LOG(log_type, fmt, ...) \
+    GC_PRINTF(log_type " %s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#   define GC_LOG_DEBUG(fmt, ...) GC_LOG("\e[40m\e[1;90m[DEBUG]\e[0m", fmt, ##__VA_ARGS__)
+#   define GC_LOG_INFO(fmt,  ...) GC_LOG("\e[40m\e[1;34m[INFO] \e[0m", fmt, ##__VA_ARGS__)
+#   define GC_LOG_WARN(fmt,  ...) GC_LOG("\e[40m\e[1;33m[WARN] \e[0m", fmt, ##__VA_ARGS__)
+#   define GC_LOG_ERROR(fmt, ...) GC_LOG("\e[40m\e[1;31m[ERROR]\e[0m", fmt, ##__VA_ARGS__)
+#   define GC_PRINTF_DEBUG(fmt, ...) GC_PRINTF("\e[40m\e[1;90m[DEBUG]\e[0m " fmt, ##__VA_ARGS__)
+#   define GC_PRINTF_INFO(fmt,  ...) GC_PRINTF("\e[40m\e[1;34m[INFO] \e[0m " fmt, ##__VA_ARGS__)
+#   define GC_PRINTF_WARN(fmt,  ...) GC_PRINTF("\e[40m\e[1;33m[WARN] \e[0m " fmt, ##__VA_ARGS__)
+#   define GC_PRINTF_ERROR(fmt, ...) GC_PRINTF("\e[40m\e[1;31m[ERROR]\e[0m " fmt, ##__VA_ARGS__)
 #endif /* GC_NO_STDIO */
+
+#ifndef GC_NO_ASSERT
+#   include <assert.h>
+#   define GC_ASSERT assert
+#endif /* GC_NO_ASSERT */
 
 #define GC_ARENA_DEFAULT_CAPACITY (1024*1024)
 typedef struct arena_s {
@@ -78,8 +107,8 @@ void arena_set_len(arena_t* arena, u64 len);
 #define ARENA_INSPECT(arena) arena_inspect(arena, __LINE__, __FILE__)
 
 
-
 #ifndef GC_COMMON_IMPLEMENTATION
+#define GC_COMMON_IMPLEMENTATION
 /* {{{ */
 
 arena_t arena_alloc(u64 size) {
@@ -133,14 +162,11 @@ void arena_inspect(arena_t* arena, u64 line, const char* file) {
     goto non_empty_arena;
 
 empty_arena:
-    GC_PRINTF(GC_DEBUG"<ARENA EMPTY>\n");
+    GC_LOG_DEBUG("<ARENA EMPTY>");
     return;
 
 non_empty_arena:
-    GC_PRINTF(
-        GC_DEBUG"<ARENA HEX DUMP> (buf=%p cap=%ld len=%ld) [%s:%ld]\n",
-        arena->buf, arena->cap, arena->len, file, line
-    );
+    GC_LOG_DEBUG( "<ARENA HEX DUMP> (buf=%p cap=%ld len=%ld) [%s:%ld]", arena->buf, arena->cap, arena->len, file, line);
     u64 i, j;
     for (i = 0; i <= pos_last_byte; i += 16) {
         GC_PRINTF("%08lX:", i);

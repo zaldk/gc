@@ -41,3 +41,13 @@ OS-independent
 Will handle:
 - parsing the commands and options from the command line
 - storing and retrieving config data
+
+## Details
+
+### CLI
+
+$ gc save SRC
+$ gc pull SRC
+$ gc push DST
+$ gc config (global | default: local)
+$ gc log
